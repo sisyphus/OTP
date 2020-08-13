@@ -1,12 +1,25 @@
 use strict;
 use warnings;
-use Digest::MD5 qw(md5_hex);
-use Digest::SHA qw(sha256_hex sha1_hex);
+use Digest::SHA qw(sha256_hex);
 
 my $file1 = "msg.in";
 my $file2 = "msg.dec";
 my $file3 = "msg.enc";
 my $digest4 = '';
+
+my $filesize = 500 + int(rand(1000));
+
+open my $wr, '>', "msg.in" or die "Cannot open 'msg.in' for writing";
+binmode($wr);
+
+for(1..$filesize) {
+  unless($_ % 91) { print WR chr(0) }
+  print $wr chr(int(rand(256)));
+}
+
+for(1..6) { print WR chr(0) }
+
+close $wr or die "Cannot close 'msg.in' after writing";
 
 for(1..100) {
   system 'encrypt.exe';
