@@ -2,6 +2,7 @@ MANIFEST
 decrypt.c
 encrypt.c
 genprime.c
+next_seed.txt
 primes.in
 README.md
 test.pl
