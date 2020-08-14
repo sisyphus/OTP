@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
  printf("bitsize: %d\n", i_bitsize);
 
  mpz_export(chk_buf, &count, 1, 1, 0, 0, z_in);
- chk_buf[count] = 0; /* I thought that mpz_export would do this ? */
+ chk_buf[count] = 0;
 
  /* i_count = (int)count; */ /* No !! We need to set i_count to the 'count' from the next mpz_export */
 
@@ -258,7 +258,7 @@ int main(int argc, char *argv[]) {
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG"))
-   printf("\nbitsizes of primes: %d %d\n", mpz_sizeinbase(p, 2), mpz_sizeinbase(q, 2));
+   printf("\nbitsizes of primes: %d %d\n", (int)mpz_sizeinbase(p, 2), (int)mpz_sizeinbase(q, 2));
 
  mpz_init(z_phi);
  mpz_init(pless1);
@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
  }
 
  if(mpz_sizeinbase(z_seed, 2) != r) {
-   printf("The size of the seed (%d) being used should be %d.\n", mpz_sizeinbase(z_seed, 2), r);
+   printf("The size of the seed (%d) being used should be %d.\n", (int)mpz_sizeinbase(z_seed, 2), r);
    exit(1);
  }
 
@@ -333,7 +333,7 @@ int main(int argc, char *argv[]) {
    printf("N: %d\n", N);
    printf("r: %d\n", r);
    printf("r_shift: %d\n", (int)r_shift);
-   printf("iterations: %d\n\n", its);
+   printf("iterations: %d\n\n", (int)its);
  }
 
  mpz_init(z_mod);
@@ -355,12 +355,7 @@ int main(int argc, char *argv[]) {
  mpz_clear(z_mod);
 
  if(r_shift) mpz_fdiv_q_2exp(z_pad, z_pad, k - r_shift);
-/*
- if(check + mpz_sizeinbase(z_pad, 2) != bitsize) {
-   printf("Bug in pad gen.\n");
-   exit(1);
- }
-*/
+
  /***************************************************************
   * enc_buf is the encrypted message. It is written to msg.enc. *
   * That buffer is prefixed with the information needed for the *
@@ -382,9 +377,9 @@ int main(int argc, char *argv[]) {
  bitdiff = mpz_sizeinbase(z_in, 2) - mpz_sizeinbase(z_enc, 2);
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("bitsize of input message: %d\n", mpz_sizeinbase(z_in, 2));
-   printf("bitsize of pad: %d\n", mpz_sizeinbase(z_pad, 2));
-   printf("bitsize of encrypted message: %d\n", mpz_sizeinbase(z_enc, 2));
+   printf("bitsize of input message: %d\n", (int)mpz_sizeinbase(z_in, 2));
+   printf("bitsize of pad: %d\n", (int)mpz_sizeinbase(z_pad, 2));
+   printf("bitsize of encrypted message: %d\n", (int)mpz_sizeinbase(z_enc, 2));
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
@@ -408,11 +403,6 @@ int main(int argc, char *argv[]) {
  if(mpz_cmp(z_check, z_enc)) {
    printf("mpz_export-mpz_import round trip failed.\n");
    printf("strlen(chk_buf): %d\n", (int)strlen(chk_buf));
-   exit(1);
- }
-
- if((i_count * 8) - i_bitsize > 7 || (i_count * 8) - i_bitsize < -7) {
-   printf("bitsize (%d) and filesize (%d) differ by more than expected.\n", i_bitsize, i_count * 8);
    exit(1);
  }
 
@@ -457,12 +447,12 @@ int main(int argc, char *argv[]) {
  ret = fwrite(enc_buf, 1, count + pad_shift, fp);
 
  if(ret < count + pad_shift) {
-   printf("ret: %d < %d\n", (int)ret, (int)count + pad_shift);
+   printf("ret: %d < %d\n", (int)ret, (int)count + (int)pad_shift);
    exit(1);
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("%d bytes written to enc_buf\n", (int)count + pad_shift);
+   printf("%d bytes written to enc_buf\n", (int)count + (int)pad_shift);
  }
 
  fclose(fp);
