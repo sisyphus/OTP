@@ -52,6 +52,12 @@ int main(int argc, char *argv[]) {
  mpz_t z_enc;
 
  stat("msg.in", &stbuf);
+
+ if(stbuf.st_size > 536870900) {
+   printf("This program cannot reliably deal with an 'msg.in' whose size is greater than 536,870,900 bytes.\n");
+   exit(1);
+ }
+
  stat("primes.in", &p_stbuf);
 
  printf("sizeof 'primes.in': %d bytes\n", (int)p_stbuf.st_size);
