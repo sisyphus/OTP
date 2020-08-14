@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG"))
-   printf("\nbitsizes of primes: %d %d\n", mpz_sizeinbase(p, 2), mpz_sizeinbase(q, 2));
+   printf("\nbitsizes of primes: %d %d\n", (int)mpz_sizeinbase(p, 2), (int)mpz_sizeinbase(q, 2));
 
  mpz_init(z_phi);
  mpz_init(pless1);
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
  }
 
  if(mpz_sizeinbase(z_seed, 2) != r) {
-   printf("The size of the seed (%d) being used should be %d.\n", mpz_sizeinbase(z_seed, 2), r);
+   printf("The size of the seed (%d) being used should be %d.\n", (int)mpz_sizeinbase(z_seed, 2), r);
    exit(1);
  }
 
@@ -275,7 +275,7 @@ int main(int argc, char *argv[]) {
    printf("N: %d\n", N);
    printf("r: %d\n", r);
    printf("r_shift: %d\n", (int)r_shift);
-   printf("iterations: %d\n\n", its);
+   printf("iterations: %d\n\n", (int)its);
  }
 
  mpz_init(z_mod);
@@ -317,9 +317,9 @@ int main(int argc, char *argv[]) {
  mpz_xor(z_dec, z_enc, z_pad);
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("bitsize of encrypted message: %d\n", mpz_sizeinbase(z_enc, 2));
-   printf("bitsize of pad: %d\n", mpz_sizeinbase(z_pad, 2));
-   printf("bitsize of decrypted message: %d\n", mpz_sizeinbase(z_dec, 2));
+   printf("bitsize of encrypted message: %d\n", (int)mpz_sizeinbase(z_enc, 2));
+   printf("bitsize of pad: %d\n", (int)mpz_sizeinbase(z_pad, 2));
+   printf("bitsize of decrypted message: %d\n", (int)mpz_sizeinbase(z_dec, 2));
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
