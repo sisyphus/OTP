@@ -108,6 +108,12 @@ int main(int argc, char *argv[]) {
  }
 
  stat("msg.enc", &stbuf);
+
+ if(stbuf.st_size > 536870900) {
+   printf("This program cannot reliably deal with an 'msg.enc' whose size is greater than 536,870,900 bytes.\n");
+   exit(1);
+ }
+
  msg_buf = malloc(1 + stbuf.st_size);
  tmp_buf = malloc(1 + stbuf.st_size);
  chk_buf = malloc(1 + stbuf.st_size);
