@@ -21,9 +21,29 @@ for(1..6) { print WR chr(0) }
 
 close $wr or die "Cannot close 'msg.in' after writing";
 
+my($enc, $dec);
+
+if(-e "encrypt.exe")        { $enc = "encrypt.exe" }
+elsif(-e "encrypt") { $enc = "encrypt" }
+else { die "Cannot find the encrypt executable" }
+
+
+if(-e "decrypt.exe")        { $dec = "decrypt.exe" }
+elsif(-e "decrypt") { $dec = "decrypt" }
+else { die "Cannot find the decrypt executable" }
+
+if($^O =~ /MSWin32/i) {
+  $enc = ".\\" . $enc;
+  $dec = ".\\" . $dec;
+}
+else {
+  $enc = "./" . $enc;
+  $dec = "./" . $dec;
+}
+
 for(1..100) {
-  system 'encrypt.exe';
-  system 'decrypt.exe';
+  system $enc;
+  system $dec;
   my $digest1 = dig($file1);
   my $digest2 = dig($file2);
   my $digest3 = dig($file3);
