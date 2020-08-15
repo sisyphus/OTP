@@ -60,8 +60,6 @@ int main(int argc, char *argv[]) {
 
  stat("primes.in", &p_stbuf);
 
- printf("sizeof 'primes.in': %d bytes\n", (int)p_stbuf.st_size);
-
  prime_buf = malloc(1 + p_stbuf.st_size);
 
  if(prime_buf == NULL) {
@@ -88,6 +86,27 @@ int main(int argc, char *argv[]) {
  fgets(prime_buf, p_stbuf.st_size, fp);
  mpz_init_set_str(p, prime_buf, base);
 
+ if(mpz_sizeinbase(p, 2) <= 500) {
+   printf("Bitsize of first prime(%d) needs to be geater than 500.\n", (int)mpz_sizeinbase(p, 2));
+   exit(1);
+ }
+
+ fgets(prime_buf, p_stbuf.st_size, fp);
+ mpz_init_set_str(q, prime_buf, base);
+
+ if(mpz_sizeinbase(q, 2) <= 500) {
+   printf("Bitsize of second prime(%d) needs to be geater than 500.\n", (int)mpz_sizeinbase(q, 2));
+   exit(1);
+ }
+
+ fclose(fp);
+ free(prime_buf);
+
+ if(mpz_sizeinbase(p, 2) == mpz_sizeinbase(q, 2)) {
+   printf("Must select primes that differ in bitsize.\n");
+   exit(1);
+ }
+
  if(!mpz_probab_prime_p(p, 50)) {
    printf("First prime is NOT prime.\n");
    mpz_out_str(stdout, base, p);
@@ -95,29 +114,10 @@ int main(int argc, char *argv[]) {
    exit(1);
  }
 
- fgets(prime_buf, p_stbuf.st_size, fp);
- mpz_init_set_str(q, prime_buf, base);
-
  if(!mpz_probab_prime_p(q, 50)) {
    printf("Second prime is NOT prime.\n");
-   exit(1);
- }
-
- fclose(fp);
- free(prime_buf);
-
- if(mpz_sizeinbase(p, 2) <= 500) {
-   printf("Bitsize of first prime(%d) needs to be geater than 500.\n", (int)mpz_sizeinbase(p, 2));
-   exit(1);
- }
-
- if(mpz_sizeinbase(q, 2) <= 500) {
-   printf("Bitsize of second prime(%d) needs to be geater than 500.\n", (int)mpz_sizeinbase(q, 2));
-   exit(1);
- }
-
- if(mpz_sizeinbase(p, 2) == mpz_sizeinbase(q, 2)) {
-   printf("Must select primes that differ in bitsize.\n");
+   mpz_out_str(stdout, base, q);
+   printf("\n");
    exit(1);
  }
 
@@ -197,14 +197,14 @@ int main(int argc, char *argv[]) {
  msg_buf[0] = 0;
  tmp[11] = 0;
 
- ret = fread(msg_buf, 1, 1 + stbuf.st_size, fp);
+ ret = fread(msg_buf, 1, stbuf.st_size, fp);
 
  if(ret != stbuf.st_size) {
    printf("'msg.in' contains %d bytes but %d were read to msg_buf.\n", (int)stbuf.st_size, (int)ret);
    exit(1);
  }
 
- msg_buf[stbuf.st_size] = 0; /* I thought fread() would do this ? */
+ msg_buf[stbuf.st_size] = 0;
 
  fclose(fp);
 
