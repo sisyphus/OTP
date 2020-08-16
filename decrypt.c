@@ -23,9 +23,10 @@
 
 int main(int argc, char *argv[]) {
  FILE *fp;
- int i_seed, i_count, i_bitsize, base, i, fail = 0;
+ int i_seed, i_count, i_bitsize, base, i;
  struct stat stbuf;
  struct stat p_stbuf;
+ struct stat d_stbuf;
  char seed_buf[11];
  char tmp[12];
  char *msg_buf, *tmp_buf, *chk_buf, *dec_buf, *prime_buf;
@@ -35,6 +36,8 @@ int main(int argc, char *argv[]) {
  mpz_t z_seed, p, q;
  unsigned int N, k, e, check, r;
  double kdoub;
+
+ stat("primes.in", &p_stbuf);
 
  prime_buf = malloc(1 + p_stbuf.st_size);
 
@@ -131,8 +134,6 @@ int main(int argc, char *argv[]) {
    exit(1);
  }
 
- printf("sizeof 'msg.enc': %d\n", (int)stbuf.st_size);
-
  msg_buf[0] = 0;
  tmp[11] = 0;
 
@@ -159,6 +160,7 @@ int main(int argc, char *argv[]) {
  tmp[i] = 0;
  i_seed = atoi(tmp);
  printf("seed: %d\n", i_seed);
+ printf("sizeof 'msg.enc': %d\n", (int)stbuf.st_size);
 
  msg_buf += i + 1;
 
@@ -167,7 +169,6 @@ int main(int argc, char *argv[]) {
 
  tmp[i] = 0;
  i_count = atoi(tmp);
- printf("count: %d\n", i_count);
 
  msg_buf += i + 1;
 
@@ -177,14 +178,8 @@ int main(int argc, char *argv[]) {
  tmp[i] = 0;
  i_bitsize = (i_count * 8) - atoi(tmp);
  printf("bitsize: %d\n", i_bitsize);
- printf("sizeof 'msg.enc': %d\n", (int)stbuf.st_size);
 
  msg_buf += i + 1;
-
- if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("file size: %d\n", (int)stbuf.st_size);
-   printf("message size: %d\n", (int)strlen(msg_buf));
- }
 
  mpz_init(z_enc);
 
@@ -205,8 +200,7 @@ int main(int argc, char *argv[]) {
 
  if(strcmp(msg_buf, chk_buf)) {
    printf("<%s>\nIS NOT:\n<%s>\n", msg_buf, chk_buf);
-   fail = 1;
-   /* exit(1); */
+   exit(1);
  }
 
 /**** START SEED GEN ****/
@@ -287,13 +281,6 @@ int main(int argc, char *argv[]) {
    printf("Z_SEED:\n");
    mpz_out_str(stdout, 16, z_seed);
    printf("\n");
-   printf("seed: %d\n", i_seed);
-   printf("e: %d\n", e);
-   printf("k: %d\n", k);
-   printf("N: %d\n", N);
-   printf("r: %d\n", r);
-   printf("r_shift: %d\n", (int)r_shift);
-   printf("iterations: %d\n\n", (int)its);
  }
 
  mpz_init(z_mod);
@@ -307,7 +294,6 @@ int main(int argc, char *argv[]) {
    mpz_mul_2exp(z_pad, z_pad, k);
    mpz_add(z_pad, z_pad, z_keep);
    mpz_fdiv_q_2exp(z_seed, z_seed, k);
-   if(!i) check = k - mpz_sizeinbase(z_keep, 2);
  }
 
  mpz_clear(z_phi);
@@ -315,11 +301,6 @@ int main(int argc, char *argv[]) {
  mpz_clear(z_mod);
 
  if(r_shift) mpz_fdiv_q_2exp(z_pad, z_pad, k - r_shift);
-
- if(check + mpz_sizeinbase(z_pad, 2) != bitsize) {
-   printf("Bug in pad gen.\n");
-   exit(1);
- }
 
  bitsize = mpz_sizeinbase(z_pad, 2);
 
@@ -351,27 +332,10 @@ int main(int argc, char *argv[]) {
  bytesize = bitsize / 8;
  if(bitsize % 8) bytesize++;
 
- if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("bitsize of z_dec: %d\n", (int)bitsize);
-   printf("bytesize of decrypted message: %d\n", (int)bytesize);
- }
-
  dec_buf = malloc(1 + bytesize);
 
  mpz_export(dec_buf, &count, 1, 1, 0, 0, z_dec);
  dec_buf[count] = 0;
-
- printf("mpz_export count: %d\n", (int)count);
-
- if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("%02x\n", dec_buf[bytesize - 1]); /* Should be the last byte */
-   printf("%02x\n", dec_buf[bytesize]);     /* Should be 00 */
- }
-
- dec_buf[bytesize] = 0; /* Should NOT be needed and is probably not needed. *
-                         * But I'm tempted to leave it in ... just in case  */
-
-/* printf("<%s>\n", dec_buf); */
 
  fp = fopen("msg.dec", "wb");
 
@@ -384,7 +348,9 @@ int main(int argc, char *argv[]) {
 
  fclose(fp);
 
- if(fail) printf("Fail: %d\n", fail);
+ stat("msg.dec", &d_stbuf);
+
+ printf("sizeof 'msg.dec': %d\n", (int)d_stbuf.st_size);
 
  return 0;
 
