@@ -16,7 +16,7 @@
  * Upon execution of the program the following is written to a file named "primes.in",     *
  *  clobbering any existing file of the same name:                                         *
  *                                                                                         *
- *  Line 1: the base b.                                                                    *
+ *  Line 1: the base b. (Must be in the range 2 to 32, inclusive).                                                                   *
  *  Line 2: the smallest prime (written as a base b integer) that is larger than the       *
  *           base b integer_string1 argument.                                              *
  *                                                                                         *
@@ -41,7 +41,8 @@ int main(int argc, char *argv[]) {
  FILE *fp;
  mpz_t a, b, p, q;
  int base;
- size_t bitsize;
+ size_t bitsize1, bitsize2;
+ int iterations = 50000;
 
  if(argc != 4) {
    printf("Usage: genprime base integer_string1 integer_string2\n");
@@ -62,10 +63,10 @@ int main(int argc, char *argv[]) {
    exit(1);
  }
 
- bitsize = mpz_sizeinbase(a, 2);
- if(bitsize <= 500) {
+ bitsize1 = mpz_sizeinbase(a, 2);
+ if(bitsize1 <= 500) {
    printf("2nd command line argument needs to be at least 501 bits, but is only %d bits.\n",
-          (int)bitsize);
+          (int)bitsize1);
    exit(1);
  }
 
@@ -74,24 +75,30 @@ int main(int argc, char *argv[]) {
    exit(1);
  }
 
- bitsize = mpz_sizeinbase(b, 2);
- if(bitsize <= 500) {
+ bitsize2 = mpz_sizeinbase(b, 2);
+ if(bitsize2 <= 500) {
    printf("3rd command line argument needs to be at least 501 bits, but is only %d bits.\n",
-          (int)bitsize);
+          (int)bitsize2);
    exit(1);
  }
 
  while(1) {
    mpz_nextprime(p, a);
-   if(mpz_probab_prime_p(p, 50)) break;
+   if(mpz_probab_prime_p(p, 2 + (iterations / bitsize1))) break;
    mpz_add_ui(a, p, 1);
  }
 
+ printf("1st prime found - checked by running %d Miller-Rabin tests.\n",
+        2 + (iterations / bitsize1));
+
  while(1) {
    mpz_nextprime(q, b);
-   if(mpz_probab_prime_p(q, 50)) break;
+   if(mpz_probab_prime_p(q, 2 + (iterations / bitsize2))) break;
    mpz_add_ui(b, q, 1);
  }
+
+ printf("2nd prime found - checked by running %d Miller-Rabin tests.\n",
+        2 + (iterations / bitsize2));
 
  fp = fopen("primes.in", "w");
 
@@ -108,6 +115,8 @@ int main(int argc, char *argv[]) {
  fputs("\n", fp);
 
  fclose(fp);
+
+ printf("Successfully Done\n");
 
  return 0;
 }
