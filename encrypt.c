@@ -53,8 +53,8 @@ int main(int argc, char *argv[]) {
 
  stat("msg.in", &stbuf);
 
- if(stbuf.st_size > 536870900) {
-   printf("This program cannot reliably deal with an 'msg.in' whose size is greater than 536,870,900 bytes.\n");
+ if(stbuf.st_size > 536870912) {
+   printf("This program cannot reliably deal with an 'msg.in' whose size is greater than 536,870,912 bytes.\n");
    exit(1);
  }
 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
  i_seed = atoi(seed_buf);
 
  if(i_seed < 0 || i_seed > 999999) {
-   printf("i_seed (%d) needs to initially be in range 0 to 999999 (inclusive).\n", i_seed);
+   printf("Value read (%d) from next_seed.txt needs to be in range 0 to 999999 (inclusive).\n", i_seed);
    exit(1);
  }
 
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
  fclose(fp);
 
  if(i_seed < 1000000000 || i_seed >= 2000000000) {
-   printf("i_seed (%d) should now be in the range 1,000,000,000 to 1,999,999,999 (inclusive).\n", i_seed);
+   printf("The seed (%d) should now be in the range 1,000,000,000 to 1,999,999,999 (inclusive).\n", i_seed);
    exit(1);
  }
 
@@ -176,19 +176,19 @@ int main(int argc, char *argv[]) {
 
  msg_buf = malloc(1 + stbuf.st_size);
  if(msg_buf == NULL) {
-   printf("Failed to allocate memory to msg_buf.\n");
+   printf("Failed to allocate memory to message string.\n");
    exit(1);
  }
 
  tmp_buf = malloc(1 + stbuf.st_size);
  if(tmp_buf == NULL) {
-   printf("Failed to allocate memory to tmp_buf.\n");
+   printf("Failed to allocate memory to temporary storage string.\n");
    exit(1);
  }
 
  chk_buf = malloc(1 + stbuf.st_size);
  if(chk_buf == NULL) {
-   printf("Failed to allocate memory to chk_buf.\n");
+   printf("Failed to allocate memory to check string.\n");
    exit(1);
  }
 
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
  mpz_import(z_in, stbuf.st_size, 1, 1, 0, 0, msg_buf);
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("MSG_IN:\n");
+   printf("MESSAGE:\n");
    mpz_out_str(stdout, 16, z_in);
    printf("\n");
  }
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
  bitsize = mpz_sizeinbase(z_in, 2);
  i_bitsize = (int)bitsize;
 
- printf("bitsize: %d\n", i_bitsize);
+ printf("bitsize of message: %d\n", i_bitsize);
 
  mpz_export(chk_buf, &count, 1, 1, 0, 0, z_in);
  chk_buf[count] = 0;
@@ -249,11 +249,6 @@ int main(int argc, char *argv[]) {
    exit(1);
  }
 
- if(ret != count) {
-   printf("Number of imported bytes (%d) differs from number of exported bytes (%d).\n",
-          (int)ret, (int)count);
- }
-
 /**** START SEED GEN ****/
 
  mpz_init_set_si(z_seed, i_seed);
@@ -262,9 +257,6 @@ int main(int argc, char *argv[]) {
    printf("Negative seed in seed gen.\n");
    exit(1);
  }
-
- if(argc > 1 && !strcmp(argv[1], "DEBUG"))
-   printf("\nbitsizes of primes: %d %d\n", (int)mpz_sizeinbase(p, 2), (int)mpz_sizeinbase(q, 2));
 
  mpz_init(z_phi);
  mpz_init(pless1);
@@ -278,11 +270,6 @@ int main(int argc, char *argv[]) {
  N = mpz_sizeinbase(z_phi, 2);
  e = N / 80;
  if(!(e & 1)) --e; /* gcd(phi,e) must be 1 - which implies that e must be odd */
-
- if(e < 3) {
-   printf("You need to choose different (larger) primes P and Q.\n");
-   exit(1);
- }
 
  mpz_mul(z_phi, pless1, qless1);
  mpz_clear(pless1);
@@ -330,7 +317,7 @@ int main(int argc, char *argv[]) {
  }
 
   if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("Z_SEED:\n");
+   printf("HEX SEED:\n");
    mpz_out_str(stdout, 16, z_seed);
    printf("\n");
  }
@@ -429,7 +416,7 @@ int main(int argc, char *argv[]) {
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("MSG_IN_BUFFER:\n");
+   printf("ENCRYPTED MESSAGE:\n");
    for(i = 0; i < count + pad_shift; i++)
      printf("%02x", ((const unsigned char*)enc_buf)[i]);
    printf("\n");
