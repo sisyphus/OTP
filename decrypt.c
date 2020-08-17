@@ -111,8 +111,8 @@ int main(int argc, char *argv[]) {
 
  stat("msg.enc", &stbuf);
 
- if(stbuf.st_size > 536870900) {
-   printf("This program cannot reliably deal with an 'msg.enc' whose size is greater than 536,870,900 bytes.\n");
+ if(stbuf.st_size > 536870912) {
+   printf("This program cannot reliably deal with an 'msg.enc' whose size is greater than 536,870,912 bytes.\n");
    exit(1);
  }
 
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 
  tmp[i] = 0;
  i_bitsize = (i_count * 8) - atoi(tmp);
- printf("bitsize: %d\n", i_bitsize);
+ printf("derived bitsize of message: %d\n", i_bitsize);
 
  msg_buf += i + 1;
 
@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
  mpz_import(z_enc, i_count, 1, 1, 0, 0, msg_buf);
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("MSG:\n");
+   printf("ENCRYPTED MESSAGE:\n");
    mpz_out_str(stdout, 16, z_enc);
    printf("\n\n");
  }
@@ -211,9 +211,6 @@ int main(int argc, char *argv[]) {
    printf("Negative seed in seed gen.\n");
    exit(1);
  }
-
- if(argc > 1 && !strcmp(argv[1], "DEBUG"))
-   printf("\nbitsizes of primes: %d %d\n", (int)mpz_sizeinbase(p, 2), (int)mpz_sizeinbase(q, 2));
 
  mpz_init(z_phi);
  mpz_init(pless1);
@@ -278,7 +275,7 @@ int main(int argc, char *argv[]) {
  }
 
   if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("Z_SEED:\n");
+   printf("HEX SEED:\n");
    mpz_out_str(stdout, 16, z_seed);
    printf("\n");
  }
@@ -322,7 +319,7 @@ int main(int argc, char *argv[]) {
  }
 
  if(argc > 1 && !strcmp(argv[1], "DEBUG")) {
-   printf("DEC:\n");
+   printf("DECRYPTED MESSAGE:\n");
    mpz_out_str(stdout, 16, z_dec);
    printf("\n\n");
  }
