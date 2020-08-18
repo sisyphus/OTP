@@ -22,6 +22,7 @@
  * This value is incremented each time a message is encrypted, thus allowing for each user *
  * to send 1,000,000 encrypted messages - after which, new input primes need to be         *
  * generated - and next_seed.txt needs to be manually altered to contain "0".              *
+ *                                                                                         *
  *******************************************************************************************/
 
 #include <stdio.h>
