@@ -6,9 +6,10 @@
  * Usage: encrypt.exe                                                                      *
  *                                                                                         *
  * Upon execution, the contents of "msg.in" are encrypted in a way that's based on the     *
- * contents of "primes.in", and written to "msg.enc"  .                                    *
+ * contents of "primes.in" and "next_seed.txt". The encrypted message is then written to   *
+ * "msg.enc".                                                                              *
  * In turn. the contents of "msg.enc" can be decrypted back to the original contents of    *
- * of "msg.in" by running decrypt.exe (whch needs to locate an identical "primes.in").     *
+ * of "msg.in" by running decrypt.exe (whch needs to locate only an identical "primes.in").*
  *                                                                                         *
  * Additional "DEBUG" output can be obtained by running "encrypt.exe DEBUG" instead of     *
  * simply "encrypt.exe".                                                                   *
