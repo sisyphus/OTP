@@ -42,10 +42,10 @@ int main(int argc, char *argv[]) {
  mpz_t a, b, p, q;
  int base;
  size_t bitsize1, bitsize2;
- int iterations = 50000; # will be divided by the bitsize of the prime, and then
-                         # incremented by 2. This is then the number of Miller-Rabin
-                         # tests that are conducted to verify that the prime is prime
-                         # (beyond reasonable doubt).
+ int iterations = 50000; /* will be divided by the bitsize of the prime, and then      *
+                          * incremented by 2. This is then the number of Miller-Rabin  *
+                          * tests that are conducted to verify that the prime is prime *
+                          * (beyond reasonable doubt).                                 */
 
  if(argc != 4) {
    printf("Usage: genprime base integer_string1 integer_string2\n");
