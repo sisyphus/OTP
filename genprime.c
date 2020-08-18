@@ -26,7 +26,7 @@
  * The values held in "primes.in" will be used by encrypt.exe and decrypt.exe to           *
  * generate (resp. decrypt) an encrypted message.                                          *
  *                                                                                         *
- * The same base and primes must be used for both encryption and decryption. The           *
+ * The same base and primes must be used by both encrypt.exe and decrypt.exe. The          *
  * security depends upon the values of the two primes being available only to the sender   *
  * and the intended recipient(s) of the encrypted message.                                 *
  *******************************************************************************************/
@@ -42,7 +42,10 @@ int main(int argc, char *argv[]) {
  mpz_t a, b, p, q;
  int base;
  size_t bitsize1, bitsize2;
- int iterations = 50000;
+ int iterations = 50000; # will be divided by the bitsize of the prime, and then
+                         # incremented by 2. This is then the number of Miller-Rabin
+                         # tests that are conducted to verify that the prime is prime
+                         # (beyond reasonable doubt).
 
  if(argc != 4) {
    printf("Usage: genprime base integer_string1 integer_string2\n");
