@@ -12,6 +12,7 @@
  *                                                                                         *
  * Additional "DEBUG" output can be obtained by running "decrypt.exe DEBUG" instead of     *
  * simply "decrypt.exe".                                                                   *
+ *                                                                                         *
  *******************************************************************************************/
 
 #include <stdio.h>
