@@ -15,11 +15,13 @@ open my $wr, '>', "msg.in" or die "Cannot open 'msg.in' for writing";
 binmode($wr);
 
 for(1..$filesize) {
-#  unless($_ % 91) { print $wr chr(0) } # embed some NULL bytes
+  unless($_ % 91) { print $wr chr(0) } # embed some NULL bytes
   print $wr chr(int(rand(256)));
 }
 
-#for(1..6) { print $wr chr(0) }         # conclude with a string of NULL bytes
+my $nulls = int(rand(6));
+
+for(0..$nulls) { print $wr chr(0) }         # add from 0 to 5 of NULL bytes
 
 close $wr or die "Cannot close 'msg.in' after writing";
 
